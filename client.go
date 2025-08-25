@@ -26,7 +26,6 @@ func NewClient(url string) (*Client, error) {
 func (c *Client) Call(method string, params any, result any) error {
 	id := c.reqID.Add(1)
 
-	// Формируем запрос
 	req := Request{
 		JSONRPC: "2.0",
 		Method:  method,
@@ -45,7 +44,6 @@ func (c *Client) Call(method string, params any, result any) error {
 		return err
 	}
 
-	// Ждём ответ
 	_, msg, err := c.conn.ReadMessage()
 	if err != nil {
 		return err
