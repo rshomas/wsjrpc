@@ -19,5 +19,5 @@ func main() {
 		return p.Text, nil
 	})
 
-	log.Fatal(srv.Listen(":8080"))
+	log.Fatal(srv.Listen(":8080", "/ws"))
 }

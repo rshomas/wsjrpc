@@ -37,8 +37,8 @@ func (s *Server) OnDisconnect(fn func(addr string)) {
 	s.onDisconnect = fn
 }
 
-func (s *Server) Listen(addr string) error {
-	http.HandleFunc("/ws", s.handleWS)
+func (s *Server) Listen(addr string, endpoint string) error {
+	http.HandleFunc(endpoint, s.handleWS)
 	log.Printf("JSON-RPC WS server listening on %s", addr)
 	return http.ListenAndServe(addr, nil)
 }
