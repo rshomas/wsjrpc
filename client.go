@@ -26,11 +26,7 @@ func NewClient(url string) (*Client, error) {
 func (c *Client) Call(method string, params any, result any) error {
 	id := c.reqID.Add(1)
 
-	req := Request{
-		JSONRPC: "2.0",
-		Method:  method,
-		ID:      id,
-	}
+	req := Request{JSONRPC: "2.0", Method: method, ID: id}
 	if params != nil {
 		b, err := json.Marshal(params)
 		if err != nil {
@@ -55,7 +51,7 @@ func (c *Client) Call(method string, params any, result any) error {
 	}
 
 	if resp.Error != nil {
-		return fmt.Errorf("rpc error %d: %s", resp.Error.Code, resp.Error.Message)
+		return fmt.Errorf("RPC error %d: %s", resp.Error.Code, resp.Error.Message)
 	}
 
 	if result != nil {

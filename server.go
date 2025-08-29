@@ -29,12 +29,12 @@ func (s *Server) Use(mw Middleware) {
 	s.router.Use(mw)
 }
 
-func (s *Server) Register(method string, h HandlerFunc) {
-	s.router.Register(method, h)
+func (s *Server) Register(method string, handler HandlerFunc) {
+	s.router.Register(method, handler)
 }
 
-func (s *Server) OnDisconnect(fn func(addr string)) {
-	s.onDisconnect = fn
+func (s *Server) OnDisconnect(handler func(addr string)) {
+	s.onDisconnect = handler
 }
 
 func (s *Server) Listen(addr string, endpoint string) error {
@@ -73,10 +73,12 @@ func (s *Server) handleWS(w http.ResponseWriter, r *http.Request) {
 		var req Request
 		if err := json.Unmarshal(msg, &req); err != nil {
 			log.Println("Invalid JSON:", err)
+			s.sendError(conn, req.ID, -32700, "Invalid JSON")
 			continue
 		}
 
 		if req.JSONRPC != "2.0" {
+			log.Println("Invalid JSON-RPC version")
 			s.sendError(conn, req.ID, -32600, "Invalid JSON-RPC version")
 			continue
 		}
@@ -87,10 +89,10 @@ func (s *Server) handleWS(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (s *Server) sendError(conn *websocket.Conn, id any, code int, msg string) {
+func (s *Server) sendError(conn *websocket.Conn, id any, code int, message string) {
 	resp := Response{
 		JSONRPC: "2.0",
-		Error:   &Error{Code: code, Message: msg},
+		Error:   &Error{Code: code, Message: message},
 		ID:      id,
 	}
 	conn.WriteJSON(resp)
